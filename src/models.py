@@ -10,7 +10,6 @@ class User(db.Model):
     password = db.Column(db.String(80), unique=False, nullable=True)
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
     user_for_fav_planets = db.relationship('UserFavoritePlanets', backref='user', lazy=True)
-    user_for_fav_people = db.relationship('UserFavoritePeople', backref='user', lazy=True)
 
     def __repr__(self):
         return '<User %r>' % self.id
@@ -64,18 +63,3 @@ class UserFavoritePlanets(db.Model):
     def serialize(self):
         return {"id": self.id,
                 "favorite_planet_id": self.id}
-    
-    
-
-class UserFavoritePeople(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    favorite_people_id = db.Column(db.Integer, db.ForeignKey('people.id'),  nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    def __repr__(self):
-        return '<UserFavoritePeople %r>' % self.id
-
-    def serialize(self):
-        return {"id": self.id,
-                "favorite_people_id": self.favorite_people_id,
-                "user_id": self.user_id}

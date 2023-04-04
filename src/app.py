@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User, People, Planets, UserFavoritePlanets, UserFavoritePeople 
+from models import db, User, People, Planets, UserFavoritePlanets
 
 
 app = Flask(__name__)
@@ -150,14 +150,6 @@ def delete_favorite_planet(favorite_id):
     return jsonify("Ok"), 200
 
 
-@app.route('/user/favorites-people/<int:user_id>', methods=['GET'])
-def get_favorites_people(user_id):
-    favorites = UserFavoritePeople.query.filter(UserFavoritePeople.user_id == user_id).all()
-    results = [favorite.serialize() for favorite in favorites]
-    response_body = {"message": "ok",
-                     "total_records": len(results),
-                     "results": results}
-    return jsonify(response_body), 200
 
 
 @app.route('/favorite/people', methods=['POST'])
@@ -169,19 +161,6 @@ def add_favorites_people():
     db.session.commit()
     return jsonify(request_body), 200
 
-
-@app.route("/user/favorites-people/<int:favorite_id>", methods = ["DELETE"])
-def delete_favorite_people(favorite_id):
-    # recibir dentro del request body
-    # suponomes que el id del usuario lo tengo user_id = 1
-    # en mi query tengo que buscar por favorite_id y también por user_id 
-    favorites = UserFavoritePeople.query.get(favorite_id)
-    if favorites is None:
-        raise APIException('Favorite not found', status_code=404)
-    else:
-        db.session.delete(favorites)
-        db.session.commit()
-        return jsonify("Ok"), 200
 
 
 # this only runs if `$ python src/app.py` is executed
